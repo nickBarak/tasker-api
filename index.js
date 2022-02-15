@@ -3,13 +3,23 @@ const app = express();
 const cors = require('cors');
 const { Pool } = require('pg');
 require('dotenv').config();
- 
+
+const {
+    PORT,
+    DB_USER,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_NAME,
+    UI_HOST,
+    UI_PORT
+} = process.env;
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors('http://localhost:3000'));
+app.use(cors(`${UI_HOST}:${UI_PORT}`));
 
 const pool = new Pool({
-    connectionString: 'postgresql://postgres:malone21@localhost:5432/task_db',
+    connectionString: `postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}`,
     idleTimeoutMillis: 0
 });
  
@@ -32,4 +42,4 @@ const indexController = require('./controllers'),
 app.use('/', indexController);
 app.use('/task', taskController);
  
-app.listen(process.env.PORT, () => console.log('Listening on port ' + process.env.PORT));
+app.listen(PORT, () => console.log('Listening on port ' + PORT));
